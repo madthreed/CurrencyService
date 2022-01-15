@@ -1,7 +1,7 @@
 package com.madthreed.currencyservice.controllers;
 
-import com.madthreed.currencyservice.beans.GiphyBean;
-import com.madthreed.currencyservice.beans.OpenExchangeRateHistoricalBean;
+import com.madthreed.currencyservice.models.GiphyBean;
+import com.madthreed.currencyservice.models.OpenExchangeRateHistoricalBean;
 import com.madthreed.currencyservice.props.CurrencyServiceProperties;
 import com.madthreed.currencyservice.proxies.GiphyAPI;
 import com.madthreed.currencyservice.proxies.OpenExchangeRatesAPI;
