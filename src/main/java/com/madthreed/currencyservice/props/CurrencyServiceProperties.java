@@ -8,25 +8,35 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 
 public class CurrencyServiceProperties {
-    private String oerApiToken;
+    private String OERApiKey;
+    private String GiphyApiKey;
     private String baseCurrency;
     private String httpEndpoint;
 
     public CurrencyServiceProperties() {
     }
 
-    public CurrencyServiceProperties(String oerApiToken, String baseCurrency, String httpEndpoint) {
-        this.oerApiToken = oerApiToken;
+    public CurrencyServiceProperties(String OERApiKey, String giphyApiKey, String baseCurrency, String httpEndpoint) {
+        this.OERApiKey = OERApiKey;
+        GiphyApiKey = giphyApiKey;
         this.baseCurrency = baseCurrency;
         this.httpEndpoint = httpEndpoint;
     }
 
-    public String getOerApiToken() {
-        return oerApiToken;
+    public String getOERApiKey() {
+        return OERApiKey;
     }
 
-    public void setOerApiToken(String oerApiToken) {
-        this.oerApiToken = oerApiToken;
+    public void setOERApiKey(String OERApiKey) {
+        this.OERApiKey = OERApiKey;
+    }
+
+    public String getGiphyApiKey() {
+        return GiphyApiKey;
+    }
+
+    public void setGiphyApiKey(String giphyApiKey) {
+        GiphyApiKey = giphyApiKey;
     }
 
     public String getBaseCurrency() {
