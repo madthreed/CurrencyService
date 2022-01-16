@@ -1,5 +1,6 @@
 package com.madthreed.currencyservice.controllers;
 
+import com.madthreed.currencyservice.models.giphy.Giphy;
 import com.madthreed.currencyservice.services.ExchangeRateService;
 import com.madthreed.currencyservice.services.GifService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,10 @@ public class MainController {
     }
 
     @GetMapping("/get-random-gif/{currency}")
-    public int getRandomGif(@PathVariable("currency") String currency) {
-        return exchangeRateService.getCompareForCurrencyCode(currency);
+    public Integer getRandomGif(@PathVariable("currency") String currency) {
+        Giphy gif = gifService.getGif("rich");
+        exchangeRateService.getCompareForCurrencyCode(currency);
+
+        return null;
     }
 }

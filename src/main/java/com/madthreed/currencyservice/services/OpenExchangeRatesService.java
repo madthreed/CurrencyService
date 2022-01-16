@@ -1,7 +1,8 @@
 package com.madthreed.currencyservice.services;
 
-import com.madthreed.currencyservice.clients.FeignOpenExchangeRatesAPIClient;
+import com.madthreed.currencyservice.proxies.FeignOpenExchangeRatesAPIClient;
 import com.madthreed.currencyservice.models.oer.ExchangeRates;
+import com.madthreed.currencyservice.services.ExchangeRateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

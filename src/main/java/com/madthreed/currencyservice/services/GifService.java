@@ -1,9 +1,9 @@
 package com.madthreed.currencyservice.services;
 
-import org.springframework.http.ResponseEntity;
+import com.madthreed.currencyservice.models.giphy.Giphy;
 
 import java.util.Map;
 
 public interface GifService {
-    ResponseEntity<Map> getGif(String tag);
+   Giphy getGif(String tag);
 }
