@@ -4,17 +4,17 @@ import java.util.Date;
 import java.util.Map;
 import lombok.Data;
 
-public class OpenExchangeRateHistoricalBean {
+public class ExchangeRates {
     private String disclaimer;
     private String license;
     private Date timestamp;
     private String base;
     private Map<String,Double> rates;
 
-    public OpenExchangeRateHistoricalBean() {
+    public ExchangeRates() {
     }
 
-    public OpenExchangeRateHistoricalBean(String disclaimer, String license, Date timestamp, String base, Map<String, Double> rates) {
+    public ExchangeRates(String disclaimer, String license, Date timestamp, String base, Map<String, Double> rates) {
         this.disclaimer = disclaimer;
         this.license = license;
         this.timestamp = timestamp;
