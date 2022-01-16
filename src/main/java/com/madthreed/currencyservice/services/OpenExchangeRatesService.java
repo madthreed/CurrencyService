@@ -31,24 +31,12 @@ public class OpenExchangeRatesService implements ExchangeRateService {
     }
 
     @Override
-    public List<String> getCurrencyCodes() {
-        List<String> codes = null;
+    public int getCompareForCurrencyCode(String currencyCode) {
         refreshRates();
-        if (currRates != null) {
-            codes = new ArrayList<>(currRates.getRates().keySet());
-        }
-        return codes;
-    }
+        Double currentCrossRate = getCrossExchangeRate(currRates, currencyCode);
+        Double prevCrossRate = getCrossExchangeRate(prevRates, currencyCode);
 
-    @Override
-    public int getCurrencyRatioForCode(String currencyCode) {
-        refreshRates();
-        Double prevCoef = getCoef(prevRates, currencyCode);
-        Double currentCoef = getCoef(currRates, currencyCode);
-
-        int coef = Double.compare(prevCoef,currentCoef);
-
-        return 0;
+        return Double.compare(currentCrossRate, prevCrossRate);
     }
 
     @Override
@@ -72,15 +60,17 @@ public class OpenExchangeRatesService implements ExchangeRateService {
         prevRates = feignOpenExchangeRatesAPIClient.getHistoricalRates(apiKey, yesterdayDate);
     }
 
-    private Double getCoef(ExchangeRates rates, String currencyCode) {
+    // Free version of OER has only USD base currency
+
+    private Double getCrossExchangeRate(ExchangeRates rates, String currencyCode) {
         if (rates == null || rates.getRates() == null)
             return null;
 
         Map<String, Double> map = rates.getRates();
+        Double baseCurrency = map.get(rates.getBase()); // Free version of OER has only USD base currency
         Double targetCurrency = map.get(currencyCode);
-        Double baseCurrency = map.get(rates.getBase());
         Double appBaseCurrency = map.get(this.baseCurrency);
 
-        return new BigDecimal((baseCurrency / appBaseCurrency) * targetCurrency).doubleValue();
+        return new BigDecimal(baseCurrency * targetCurrency / appBaseCurrency ).doubleValue();
     }
 }
