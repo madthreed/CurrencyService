@@ -1,12 +1,12 @@
 package com.madthreed.currencyservice.services;
 
 import com.madthreed.currencyservice.clients.GifClient;
-import com.madthreed.currencyservice.models.giphy.Giphy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
+import java.util.Set;
 
 @Service
 public class GiphyGifService implements GifService {
@@ -21,8 +21,8 @@ public class GiphyGifService implements GifService {
     }
 
     @Override
-    public Giphy getGif(String tag) {
-        Giphy randomGif = gifClient.retrieveRandomGif(apiKey, tag);
+    public ResponseEntity<?> getGif(String tag) {
+        ResponseEntity<?> randomGif = gifClient.retrieveRandomGif(apiKey, tag);
 
         return randomGif;
     }

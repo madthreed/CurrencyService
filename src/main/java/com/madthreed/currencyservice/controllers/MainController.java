@@ -1,13 +1,24 @@
 package com.madthreed.currencyservice.controllers;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.madthreed.currencyservice.models.giphy.Giphy;
 import com.madthreed.currencyservice.services.ExchangeRateService;
 import com.madthreed.currencyservice.services.GifService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/{httpEndpoint}")
@@ -22,8 +33,11 @@ public class MainController {
     }
 
     @GetMapping("/get-random-gif/{currency}")
-    public Integer getRandomGif(@PathVariable("currency") String currency) {
-        Giphy gif = gifService.getGif("rich");
+    public Integer getRandomGif(@PathVariable("currency") String currency) throws IOException {
+        ResponseEntity<?> gif = gifService.getGif("rich");
+
+        Map map = (LinkedHashMap) gif.getBody();
+
         exchangeRateService.getCompareForCurrencyCode(currency);
 
         return null;
