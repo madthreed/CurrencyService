@@ -1,10 +1,5 @@
 package com.madthreed.currencyservice.controllers;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.madthreed.currencyservice.models.giphy.Giphy;
 import com.madthreed.currencyservice.services.ExchangeRateService;
 import com.madthreed.currencyservice.services.GifService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/{httpEndpoint}")
