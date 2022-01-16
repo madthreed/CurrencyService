@@ -1,8 +1,7 @@
 package com.madthreed.currencyservice.services;
 
-import com.madthreed.currencyservice.proxies.FeignOpenExchangeRatesAPIClient;
+import com.madthreed.currencyservice.proxies.FeignOpenExchangeRatesAPIProxy;
 import com.madthreed.currencyservice.models.oer.ExchangeRates;
-import com.madthreed.currencyservice.services.ExchangeRateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -17,7 +16,7 @@ public class OpenExchangeRatesService implements ExchangeRateService {
     private ExchangeRates prevRates;
     private ExchangeRates currRates;
 
-    FeignOpenExchangeRatesAPIClient feignOpenExchangeRatesAPIClient;
+    FeignOpenExchangeRatesAPIProxy feignOpenExchangeRatesAPIProxy;
 
     @Value("${openexchangerates.baseCurrency}")
     String baseCurrency;
@@ -27,8 +26,8 @@ public class OpenExchangeRatesService implements ExchangeRateService {
 
 
     @Autowired
-    public OpenExchangeRatesService(FeignOpenExchangeRatesAPIClient feignOpenExchangeRatesAPIClient) {
-        this.feignOpenExchangeRatesAPIClient = feignOpenExchangeRatesAPIClient;
+    public OpenExchangeRatesService(FeignOpenExchangeRatesAPIProxy feignOpenExchangeRatesAPIProxy) {
+        this.feignOpenExchangeRatesAPIProxy = feignOpenExchangeRatesAPIProxy;
     }
 
     @Override
@@ -48,7 +47,7 @@ public class OpenExchangeRatesService implements ExchangeRateService {
     }
 
     private void refreshCurrentRates(long currentTime) {
-        currRates = feignOpenExchangeRatesAPIClient.getLatestRates(apiKey);
+        currRates = feignOpenExchangeRatesAPIProxy.getLatestRates(apiKey);
     }
 
     private void refreshPreviousRates(long currentTime) {
@@ -58,7 +57,7 @@ public class OpenExchangeRatesService implements ExchangeRateService {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         String yesterdayDate = df.format(calendar.getTime());
 
-        prevRates = feignOpenExchangeRatesAPIClient.getHistoricalRates(apiKey, yesterdayDate);
+        prevRates = feignOpenExchangeRatesAPIProxy.getHistoricalRates(apiKey, yesterdayDate);
     }
 
     // Free version of OER has only USD base currency
