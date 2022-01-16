@@ -1,4 +1,4 @@
-package com.madthreed.currencyservice.models;
+package com.madthreed.currencyservice.models.oer;
 
 import java.util.Date;
 import java.util.Map;

@@ -1,6 +1,8 @@
 package com.madthreed.currencyservice.controllers;
 
-import com.madthreed.currencyservice.models.OpenExchangeRateHistoricalBean;
+import com.madthreed.currencyservice.models.giphy.Giphy;
+import com.madthreed.currencyservice.models.giphy.GiphyWrapper;
+import com.madthreed.currencyservice.models.oer.OpenExchangeRateHistoricalBean;
 import com.madthreed.currencyservice.proxies.GiphyAPI;
 import com.madthreed.currencyservice.proxies.OpenExchangeRatesAPI;
 import feign.FeignException;
@@ -15,14 +17,18 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Map;
 
 @RestController
 public class CurrencyServiceController {
-    @Autowired
     private OpenExchangeRatesAPI openExchangeRatesAPI;
+    private GiphyAPI giphyAPI;
 
     @Autowired
-    private GiphyAPI giphyAPI;
+    public CurrencyServiceController(OpenExchangeRatesAPI openExchangeRatesAPI, GiphyAPI giphyAPI) {
+        this.openExchangeRatesAPI = openExchangeRatesAPI;
+        this.giphyAPI = giphyAPI;
+    }
 
     @Value("${currency-service.httpEndpoint}")
     private String httpEndpoint;
@@ -38,46 +44,33 @@ public class CurrencyServiceController {
 
 
     @GetMapping("/{httpEndpoint}/{targetCurrency}")
-    public ResponseEntity<?> currencyService(@PathVariable String targetCurrency, @PathVariable String httpEndpoint) {
-        OpenExchangeRateHistoricalBean responseNowEntity = null;
-        OpenExchangeRateHistoricalBean responseYesterdayEntity = null;
-        ResponseEntity<?> responseEntity = null;
-
-        double currExchangeRate = 0.0;
-        double yesterdayExchangeRate = 0.0;
-
-//        String oerApiKey = environment.getProperty("currency-service.OERApiKey");
-//        String giphyApiKey = environment.getProperty("currency-service.GiphyApiKey");
-//        String baseCurrency = environment.getProperty("currency-service.baseCurrency");
-
+    public ResponseEntity<Map> currencyService(@PathVariable String targetCurrency, @PathVariable String httpEndpoint) {
         GregorianCalendar calendar = new GregorianCalendar();
+        calendar.roll(Calendar.DAY_OF_MONTH, -10); //TODO delete
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-        calendar.roll(Calendar.DAY_OF_MONTH, -1);
-
         String nowDate = df.format(calendar.getTime());
         calendar.roll(Calendar.DAY_OF_MONTH, -1);
         String yesterdayDate = df.format(calendar.getTime());
 
         try {
-            responseNowEntity = openExchangeRatesAPI.retrieveRate(oerApiKey, baseCurrency, targetCurrency, nowDate);
-            responseYesterdayEntity = openExchangeRatesAPI.retrieveRate(oerApiKey, baseCurrency, targetCurrency, yesterdayDate);
+            OpenExchangeRateHistoricalBean responseNowEntity = openExchangeRatesAPI.retrieveRate(oerApiKey, baseCurrency, targetCurrency, nowDate);
+            OpenExchangeRateHistoricalBean responseYesterdayEntity = openExchangeRatesAPI.retrieveRate(oerApiKey, baseCurrency, targetCurrency, yesterdayDate);
 
-            currExchangeRate = responseNowEntity.getRates().get(targetCurrency);
-            yesterdayExchangeRate = responseYesterdayEntity.getRates().get(targetCurrency);
+            double currExchangeRate = responseNowEntity.getRates().get(targetCurrency);
+            double yesterdayExchangeRate = responseYesterdayEntity.getRates().get(targetCurrency);
+
+//            Giphy responseEntity = (currExchangeRate >= yesterdayExchangeRate) ?
+//                    giphyAPI.retrieveRandomGif(giphyApiKey, "rich") :
+//                    giphyAPI.retrieveRandomGif(giphyApiKey, "broke"); //TODO
+
+            ResponseEntity<Map> responseEntity = giphyAPI.retrieveRandomGif(giphyApiKey, "rich");
+            return responseEntity;
         } catch (FeignException e) {
             e.printStackTrace(); // TODO "OpenExchangeRates API error"
         }
 
+//        String r = responseEntity.getData().entrySet().stream().filter(u -> u.getKey().equals("url")).toString();
 
-        try {
-            responseEntity = (currExchangeRate >= yesterdayExchangeRate) ?
-                    giphyAPI.retrieveRandomGif(giphyApiKey, "rich") :
-                    giphyAPI.retrieveRandomGif(giphyApiKey, "broke"); //TODO
-        } catch (FeignException e) {
-            e.printStackTrace(); // TODO "Giphy API error"
-        }
-
-
-        return responseEntity; //TODO
+        return null; //TODO
     }
 }

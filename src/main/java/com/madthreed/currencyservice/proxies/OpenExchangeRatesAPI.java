@@ -1,6 +1,6 @@
 package com.madthreed.currencyservice.proxies;
 
-import com.madthreed.currencyservice.models.OpenExchangeRateHistoricalBean;
+import com.madthreed.currencyservice.models.oer.OpenExchangeRateHistoricalBean;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
