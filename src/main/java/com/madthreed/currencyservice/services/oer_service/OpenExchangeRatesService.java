@@ -1,6 +1,6 @@
-package com.madthreed.currencyservice.services;
+package com.madthreed.currencyservice.services.oer_service;
 
-import com.madthreed.currencyservice.proxies.FeignOpenExchangeRatesAPIProxy;
+import com.madthreed.currencyservice.clients.ExchangeRatesClient;
 import com.madthreed.currencyservice.models.oer.ExchangeRates;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,7 +16,7 @@ public class OpenExchangeRatesService implements ExchangeRateService {
     private ExchangeRates prevRates;
     private ExchangeRates currRates;
 
-    FeignOpenExchangeRatesAPIProxy feignOpenExchangeRatesAPIProxy;
+    ExchangeRatesClient exchangeRatesClient;
 
     @Value("${openexchangerates.baseCurrency}")
     String baseCurrency;
@@ -26,8 +26,8 @@ public class OpenExchangeRatesService implements ExchangeRateService {
 
 
     @Autowired
-    public OpenExchangeRatesService(FeignOpenExchangeRatesAPIProxy feignOpenExchangeRatesAPIProxy) {
-        this.feignOpenExchangeRatesAPIProxy = feignOpenExchangeRatesAPIProxy;
+    public OpenExchangeRatesService(ExchangeRatesClient exchangeRatesClient) {
+        this.exchangeRatesClient = exchangeRatesClient;
     }
 
     @Override
@@ -47,7 +47,7 @@ public class OpenExchangeRatesService implements ExchangeRateService {
     }
 
     private void refreshCurrentRates(long currentTime) {
-        currRates = feignOpenExchangeRatesAPIProxy.getLatestRates(apiKey);
+        currRates = exchangeRatesClient.getLatestRates(apiKey);
     }
 
     private void refreshPreviousRates(long currentTime) {
@@ -57,7 +57,7 @@ public class OpenExchangeRatesService implements ExchangeRateService {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         String yesterdayDate = df.format(calendar.getTime());
 
-        prevRates = feignOpenExchangeRatesAPIProxy.getHistoricalRates(apiKey, yesterdayDate);
+        prevRates = exchangeRatesClient.getHistoricalRates(apiKey, yesterdayDate);
     }
 
     // Free version of OER has only USD base currency

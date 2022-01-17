@@ -1,17 +1,15 @@
 package com.madthreed.currencyservice.controllers;
 
-import com.madthreed.currencyservice.services.ExchangeRateService;
-import com.madthreed.currencyservice.services.GifService;
+import com.madthreed.currencyservice.services.giphy_service.GifService;
+import com.madthreed.currencyservice.services.oer_service.ExchangeRateService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/{httpEndpoint}")
@@ -26,13 +24,13 @@ public class MainController {
     }
 
     @GetMapping("/get-random-gif/{currency}")
-    public Integer getRandomGif(@PathVariable("currency") String currency) throws IOException {
-        ResponseEntity<?> gif = gifService.getGif("rich");
-
-        Map map = (LinkedHashMap) gif.getBody();
+    public void getRandomGif(@PathVariable("currency") String currency, HttpServletResponse response) throws IOException {
 
         exchangeRateService.getCompareForCurrencyCode(currency);
 
-        return null;
+
+        String gifUrl = gifService.getGifUrl("rich");
+
+        response.sendRedirect(gifUrl);
     }
 }

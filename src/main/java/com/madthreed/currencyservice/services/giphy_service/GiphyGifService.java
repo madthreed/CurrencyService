@@ -1,12 +1,12 @@
-package com.madthreed.currencyservice.services;
+package com.madthreed.currencyservice.services.giphy_service;
 
 import com.madthreed.currencyservice.clients.GifClient;
+import com.madthreed.currencyservice.services.giphy_service.GifService;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import java.util.Set;
 
 @Service
 public class GiphyGifService implements GifService {
@@ -21,9 +21,13 @@ public class GiphyGifService implements GifService {
     }
 
     @Override
-    public ResponseEntity<?> getGif(String tag) {
-        ResponseEntity<?> randomGif = gifClient.retrieveRandomGif(apiKey, tag);
+    public String getGifUrl(String tag) {
+        ResponseEntity<String> randomGifResponse = gifClient.retrieveRandomGif(apiKey, tag);
 
-        return randomGif;
+
+        JSONObject jsonBody = new JSONObject(randomGifResponse.getBody());
+        String embed_url = jsonBody.getJSONObject("data").getString("embed_url");
+
+        return embed_url;
     }
 }

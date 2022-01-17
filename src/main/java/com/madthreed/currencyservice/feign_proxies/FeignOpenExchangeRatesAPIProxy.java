@@ -1,4 +1,4 @@
-package com.madthreed.currencyservice.proxies;
+package com.madthreed.currencyservice.feign_proxies;
 
 import com.madthreed.currencyservice.clients.ExchangeRatesClient;
 import com.madthreed.currencyservice.models.oer.ExchangeRates;

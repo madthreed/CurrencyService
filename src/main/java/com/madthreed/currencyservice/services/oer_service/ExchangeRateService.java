@@ -1,4 +1,4 @@
-package com.madthreed.currencyservice.services;
+package com.madthreed.currencyservice.services.oer_service;
 
 public interface ExchangeRateService {
 //    List<String> getCurrencyCodes();
