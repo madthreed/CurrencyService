@@ -1,4 +1,4 @@
-package com.madthreed.currencyservice.services.giphy_service;
+package com.madthreed.currencyservice.services;
 
 
 public interface GifService {

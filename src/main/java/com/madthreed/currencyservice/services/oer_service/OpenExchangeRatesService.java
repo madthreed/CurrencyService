@@ -2,6 +2,7 @@ package com.madthreed.currencyservice.services.oer_service;
 
 import com.madthreed.currencyservice.clients.ExchangeRatesClient;
 import com.madthreed.currencyservice.models.oer.ExchangeRates;
+import com.madthreed.currencyservice.services.ExchangeRateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -13,10 +14,10 @@ import java.util.*;
 
 @Service
 public class OpenExchangeRatesService implements ExchangeRateService {
+    ExchangeRatesClient exchangeRatesClient;
+
     private ExchangeRates prevRates;
     private ExchangeRates currRates;
-
-    ExchangeRatesClient exchangeRatesClient;
 
     @Value("${openexchangerates.baseCurrency}")
     String baseCurrency;
@@ -39,8 +40,7 @@ public class OpenExchangeRatesService implements ExchangeRateService {
         return Double.compare(currentCrossRate, prevCrossRate);
     }
 
-    @Override
-    public void refreshRates() {
+    private void refreshRates() {
         long currentTime = System.currentTimeMillis();
         refreshCurrentRates(currentTime);
         refreshPreviousRates(currentTime);
@@ -60,14 +60,14 @@ public class OpenExchangeRatesService implements ExchangeRateService {
         prevRates = exchangeRatesClient.getHistoricalRates(apiKey, yesterdayDate);
     }
 
-    // Free version of OER has only USD base currency
+    // Free version of OER has only USD base currency, so we use cross rates
 
     private Double getCrossExchangeRate(ExchangeRates rates, String currencyCode) {
         if (rates == null || rates.getRates() == null)
             return null;
 
         Map<String, Double> map = rates.getRates();
-        Double baseCurrency = map.get(rates.getBase()); // Free version of OER has only USD base currency
+        Double baseCurrency = map.get(rates.getBase());
         Double targetCurrency = map.get(currencyCode);
         Double appBaseCurrency = map.get(this.baseCurrency);
 

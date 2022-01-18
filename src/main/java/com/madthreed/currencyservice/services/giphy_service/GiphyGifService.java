@@ -1,7 +1,7 @@
 package com.madthreed.currencyservice.services.giphy_service;
 
 import com.madthreed.currencyservice.clients.GifClient;
-import com.madthreed.currencyservice.services.giphy_service.GifService;
+import com.madthreed.currencyservice.services.GifService;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

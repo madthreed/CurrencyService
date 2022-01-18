@@ -1,4 +1,4 @@
-package com.madthreed.currencyservice.feign_proxies;
+package com.madthreed.currencyservice.clients.feign_clients;
 
 import com.madthreed.currencyservice.clients.GifClient;
 import org.springframework.cloud.openfeign.FeignClient;

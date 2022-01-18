@@ -1,7 +1,7 @@
 package com.madthreed.currencyservice.controllers;
 
-import com.madthreed.currencyservice.services.giphy_service.GifService;
-import com.madthreed.currencyservice.services.oer_service.ExchangeRateService;
+import com.madthreed.currencyservice.services.GifService;
+import com.madthreed.currencyservice.services.ExchangeRateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,8 +14,8 @@ import java.io.IOException;
 @RestController
 @RequestMapping("/{httpEndpoint}")
 public class MainController {
-    private ExchangeRateService exchangeRateService;
-    private GifService gifService;
+    private final ExchangeRateService exchangeRateService;
+    private final GifService gifService;
 
     @Autowired
     public MainController(ExchangeRateService exchangeRateService, GifService gifService) {
