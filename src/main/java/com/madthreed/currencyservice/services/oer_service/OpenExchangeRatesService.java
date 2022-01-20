@@ -52,11 +52,11 @@ public class OpenExchangeRatesService implements ExchangeRateService {
 
     private void refreshRates() {
         long currentTime = System.currentTimeMillis();
-        refreshCurrentRates(currentTime);
+        refreshCurrentRates();
         refreshPreviousRates(currentTime);
     }
 
-    private void refreshCurrentRates(long currentTime) {
+    private void refreshCurrentRates() {
         currRates = exchangeRatesClient.getLatestRates(this.apiKey);
     }
 

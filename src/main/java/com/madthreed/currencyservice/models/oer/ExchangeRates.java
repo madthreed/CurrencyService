@@ -2,7 +2,6 @@ package com.madthreed.currencyservice.models.oer;
 
 import java.util.Date;
 import java.util.Map;
-import lombok.Data;
 
 public class ExchangeRates {
     private String disclaimer;
@@ -10,9 +9,6 @@ public class ExchangeRates {
     private Date timestamp;
     private String base;
     private Map<String,Double> rates;
-
-    public ExchangeRates() {
-    }
 
     public ExchangeRates(String disclaimer, String license, Date timestamp, String base, Map<String, Double> rates) {
         this.disclaimer = disclaimer;
