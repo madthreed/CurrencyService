@@ -3,6 +3,7 @@ package com.madthreed.currencyservice.services.giphy_service;
 import com.madthreed.currencyservice.clients.GifClient;
 import com.madthreed.currencyservice.services.GifService;
 import feign.FeignException;
+import lombok.AllArgsConstructor;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,7 @@ import java.io.InvalidObjectException;
 
 @Service
 public class GiphyGifService implements GifService {
-    private GifClient gifClient;
+    private final GifClient gifClient;
 
     @Value("${giphy.apiKey}")
     String apiKey;
@@ -29,7 +30,7 @@ public class GiphyGifService implements GifService {
     public String getGifUrl(String tag) throws IOException {
         ResponseEntity<String> randomGifResponse;
         try {
-            randomGifResponse = gifClient.retrieveRandomGif(apiKey, tag);
+            randomGifResponse = gifClient.retrieveRandomGif(this.apiKey, tag);
         } catch (FeignException e) {
             e.printStackTrace();
             throw new IOException("Can't retrieve random gif from Giphy.com");

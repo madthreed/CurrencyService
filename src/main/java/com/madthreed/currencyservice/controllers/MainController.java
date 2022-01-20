@@ -4,10 +4,9 @@ import com.madthreed.currencyservice.services.ExchangeRateService;
 import com.madthreed.currencyservice.services.GifService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
@@ -33,7 +32,7 @@ import java.io.IOException;
  * gif_name.broke - тег картинки
  * ------------------------
  *
- * Обращение к сервису с параметрами по-умолчанию: /rnd-gif/get?currency=RUB
+ * Обращение к сервису с параметрами по-умолчанию: /rnd-gif/get/RUB
  * где RUB - валюта для сравнения
  */
 
@@ -44,22 +43,17 @@ public class MainController {
     private final ExchangeRateService exchangeRateService;
     private final GifService gifService;
 
-    @Value("${gif_name.rich}")
-    private String richTag;
-    @Value("${gif_name.broke}")
-    private String brokeTag;
-
     @Autowired
     public MainController(ExchangeRateService exchangeRateService, GifService gifService) {
         this.exchangeRateService = exchangeRateService;
         this.gifService = gifService;
     }
 
-    @GetMapping("/get")
-    public String getRandomGif(@RequestParam("currency") String currency) {
+    @GetMapping("/get/{currency}")
+    public String getRandomGif(@PathVariable String currency) {
         try {
             int res = exchangeRateService.getCompareForCurrencyCode(currency);
-            return res >= 0 ? gifService.getGifUrl(this.richTag) : gifService.getGifUrl(this.brokeTag);
+            return res >= 0 ? gifService.getGifUrl("${gif_name.rich}") : gifService.getGifUrl("${gif_name.broke}");
         } catch (IOException e) {
             e.printStackTrace();
             return e.getMessage();

@@ -18,7 +18,7 @@ import java.util.Map;
 
 @Service
 public class OpenExchangeRatesService implements ExchangeRateService {
-    ExchangeRatesClient exchangeRatesClient;
+    private final ExchangeRatesClient exchangeRatesClient;
 
     private ExchangeRates prevRates;
     private ExchangeRates currRates;
