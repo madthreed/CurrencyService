@@ -1,23 +1,27 @@
 
-Микросервис обращается к сервису курсов валют https://openexchangerates.org/
-и отдает gif в ответ:
-если курс по отношению к рублю за сегодня стал выше вчерашнего,
-то отдаем случайную картинку отсюда https://giphy.com/search/rich
-если ниже - отсюда https://giphy.com/search/broke
+___
+    Микросервис обращается к сервису курсов валют https://openexchangerates.org/ и отдает gif в ответ:
+    если курс по отношению к рублю за сегодня стал выше вчерашнего,
+    то отдаем случайную картинку отсюда https://giphy.com/search/rich
+    если ниже - отсюда https://giphy.com/search/broke
 
-------------------------
-Параметры сервиса находятся в файле application.properties
-httpEndpoint - эндпоинт сервиса
-openexchangerates.url
-openexchangerates.apiKey - api-ключ пользователя
-openexchangerates.baseCurrency - валюта по отношению к которой смотрится курс
+___
+    Обращение к сервису:
+    /{endpoint}/get/{currency}
+    где:
+    {currency} - тег валюты для сравнения с базовой
+    {endpoint} - httpEndpoint из файла конфигурации application.properties
 
-giphy.url
-giphy.apiKey - api-ключ пользователя
+___
+    application.properties
 
-gif_name.rich - тег картинки
-gif_name.broke - тег картинки
-------------------------
+    httpEndpoint - эндпоинт сервиса
+    openexchangerates.url - эндпоинт RESTapi OpenChangeRates.org
+    openexchangerates.apiKey - api-ключ (получаем на OpenExchangeRate.org)
+    openexchangerates.baseCurrency - валюта по отношению к которой смотрится курс
 
-Обращение к сервису с параметрами по-умолчанию: /rnd-gif/get/{currency}
-где {currency} - тег валюты для сравнения с базовой
+    giphy.url - эндпоинт RESTapi Giphy.com
+    giphy.apiKey - api-ключ (получаем на Giphy.com)
+
+    gif_name.rich - тег картинки, если today rate >= yesterday rate
+    gif_name.broke - тег картинки, если today rate < yesterday rate
