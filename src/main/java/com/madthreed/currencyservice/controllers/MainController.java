@@ -9,36 +9,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-
-/**
- * Микросервис обращается к сервису курсов валют https://openexchangerates.org/
- * и отдает gif в ответ:
- * если курс по отношению к рублю за сегодня стал выше вчерашнего,
- * то отдаем случайную картинку отсюда https://giphy.com/search/rich
- * если ниже - отсюда https://giphy.com/search/broke
- *
- * ------------------------
- * Параметры сервиса находятся в файле application.properties
- * httpEndpoint - эндпоинт сервиса
- * openexchangerates.url
- * openexchangerates.apiKey - api-ключ пользователя
- * openexchangerates.baseCurrency - валюта по отношению к которой смотрится курс
- *
- * giphy.url
- * giphy.apiKey - api-ключ пользователя
- *
- * gif_name.rich - тег картинки
- * gif_name.broke - тег картинки
- * ------------------------
- *
- * Обращение к сервису с параметрами по-умолчанию: /rnd-gif/get/RUB
- * где RUB - валюта для сравнения
- */
 
 @Slf4j
 @RestController
-@RequestMapping("${httpEndpoint}")
+//@RequestMapping("${httpEndpoint}")
 public class MainController {
     private final ExchangeRateService exchangeRateService;
     private final GifService gifService;
@@ -49,16 +26,16 @@ public class MainController {
         this.gifService = gifService;
     }
 
-    @GetMapping("/get/{currency}")
-    public String getRandomGif(@PathVariable String currency) {
+    @RequestMapping("${httpEndpoint}/get/{currency}")
+    public String getRandomGif(@PathVariable String currency, HttpServletResponse response) {
         try {
             int res = exchangeRateService.getCompareForCurrencyCode(currency);
-            return res >= 0 ? gifService.getGifUrl("${gif_name.rich}") : gifService.getGifUrl("${gif_name.broke}");
+            String gifUrl = res >= 0 ? gifService.getGifUrl("${gif_name.rich}") : gifService.getGifUrl("${gif_name.broke}");
+//            response.sendRedirect(gifUrl);
+            return gifUrl;
         } catch (IOException e) {
             e.printStackTrace();
             return e.getMessage();
         }
-
-//        response.sendRedirect(gifUrl);
     }
 }
