@@ -1,8 +1,0 @@
-{
-  "properties": [
-    {
-      "name": "giphy.apiKey",
-      "type": "java.lang.String",
-      "description": "Description for giphy.apiKey."
-  }
-] }

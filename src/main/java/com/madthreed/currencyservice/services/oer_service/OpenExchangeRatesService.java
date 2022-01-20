@@ -3,14 +3,18 @@ package com.madthreed.currencyservice.services.oer_service;
 import com.madthreed.currencyservice.clients.ExchangeRatesClient;
 import com.madthreed.currencyservice.models.oer.ExchangeRates;
 import com.madthreed.currencyservice.services.ExchangeRateService;
+import feign.FeignException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Map;
 
 @Service
 public class OpenExchangeRatesService implements ExchangeRateService {
@@ -32,8 +36,14 @@ public class OpenExchangeRatesService implements ExchangeRateService {
     }
 
     @Override
-    public int getCompareForCurrencyCode(String currencyCode) {
-        refreshRates();
+    public int getCompareForCurrencyCode(String currencyCode) throws IOException {
+        try {
+            refreshRates();
+        } catch (FeignException e) {
+            e.printStackTrace();
+            throw new IOException("Can't retrieve exchange rates from OpenExchangeRate.org");
+        }
+
         Double currentCrossRate = getCrossExchangeRate(currRates, currencyCode);
         Double prevCrossRate = getCrossExchangeRate(prevRates, currencyCode);
 
@@ -47,7 +57,7 @@ public class OpenExchangeRatesService implements ExchangeRateService {
     }
 
     private void refreshCurrentRates(long currentTime) {
-        currRates = exchangeRatesClient.getLatestRates(apiKey);
+        currRates = exchangeRatesClient.getLatestRates(this.apiKey);
     }
 
     private void refreshPreviousRates(long currentTime) {
@@ -57,7 +67,7 @@ public class OpenExchangeRatesService implements ExchangeRateService {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         String yesterdayDate = df.format(calendar.getTime());
 
-        prevRates = exchangeRatesClient.getHistoricalRates(apiKey, yesterdayDate);
+        prevRates = exchangeRatesClient.getHistoricalRates(this.apiKey, yesterdayDate);
     }
 
     // Free version of OER has only USD base currency, so we use cross rates
@@ -71,6 +81,6 @@ public class OpenExchangeRatesService implements ExchangeRateService {
         Double targetCurrency = map.get(currencyCode);
         Double appBaseCurrency = map.get(this.baseCurrency);
 
-        return new BigDecimal(baseCurrency * targetCurrency / appBaseCurrency ).doubleValue();
+        return new BigDecimal(baseCurrency * targetCurrency / appBaseCurrency).doubleValue();
     }
 }
