@@ -1,9 +1,8 @@
 package com.madthreed.currencyservice.services;
 
-import org.springframework.http.ResponseEntity;
 
-import java.util.Set;
+import java.io.IOException;
 
 public interface GifService {
-   ResponseEntity<?> getGif(String tag);
+   String getGifUrl(String tag) throws IOException;
 }

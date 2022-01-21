@@ -1,22 +1,27 @@
-package com.madthreed.currencyservice.services;
+package com.madthreed.currencyservice.services.oer_service;
 
-import com.madthreed.currencyservice.proxies.FeignOpenExchangeRatesAPIProxy;
+import com.madthreed.currencyservice.clients.ExchangeRatesClient;
 import com.madthreed.currencyservice.models.oer.ExchangeRates;
+import com.madthreed.currencyservice.services.ExchangeRateService;
+import feign.FeignException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Map;
 
 @Service
 public class OpenExchangeRatesService implements ExchangeRateService {
+    private final ExchangeRatesClient exchangeRatesClient;
+
     private ExchangeRates prevRates;
     private ExchangeRates currRates;
-
-    FeignOpenExchangeRatesAPIProxy feignOpenExchangeRatesAPIProxy;
 
     @Value("${openexchangerates.baseCurrency}")
     String baseCurrency;
@@ -26,28 +31,33 @@ public class OpenExchangeRatesService implements ExchangeRateService {
 
 
     @Autowired
-    public OpenExchangeRatesService(FeignOpenExchangeRatesAPIProxy feignOpenExchangeRatesAPIProxy) {
-        this.feignOpenExchangeRatesAPIProxy = feignOpenExchangeRatesAPIProxy;
+    public OpenExchangeRatesService(ExchangeRatesClient exchangeRatesClient) {
+        this.exchangeRatesClient = exchangeRatesClient;
     }
 
     @Override
-    public int getCompareForCurrencyCode(String currencyCode) {
-        refreshRates();
+    public int getCompareForCurrencyCode(String currencyCode) throws IOException {
+        try {
+            refreshRates();
+        } catch (FeignException e) {
+            e.printStackTrace();
+            throw new IOException("Can't retrieve exchange rates from OpenExchangeRate.org");
+        }
+
         Double currentCrossRate = getCrossExchangeRate(currRates, currencyCode);
         Double prevCrossRate = getCrossExchangeRate(prevRates, currencyCode);
 
         return Double.compare(currentCrossRate, prevCrossRate);
     }
 
-    @Override
-    public void refreshRates() {
+    private void refreshRates() {
         long currentTime = System.currentTimeMillis();
-        refreshCurrentRates(currentTime);
+        refreshCurrentRates();
         refreshPreviousRates(currentTime);
     }
 
-    private void refreshCurrentRates(long currentTime) {
-        currRates = feignOpenExchangeRatesAPIProxy.getLatestRates(apiKey);
+    private void refreshCurrentRates() {
+        currRates = exchangeRatesClient.getLatestRates(this.apiKey);
     }
 
     private void refreshPreviousRates(long currentTime) {
@@ -57,20 +67,20 @@ public class OpenExchangeRatesService implements ExchangeRateService {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         String yesterdayDate = df.format(calendar.getTime());
 
-        prevRates = feignOpenExchangeRatesAPIProxy.getHistoricalRates(apiKey, yesterdayDate);
+        prevRates = exchangeRatesClient.getHistoricalRates(this.apiKey, yesterdayDate);
     }
 
-    // Free version of OER has only USD base currency
+    // Free version of OER has only USD base currency, so we use cross rates
 
     private Double getCrossExchangeRate(ExchangeRates rates, String currencyCode) {
         if (rates == null || rates.getRates() == null)
             return null;
 
         Map<String, Double> map = rates.getRates();
-        Double baseCurrency = map.get(rates.getBase()); // Free version of OER has only USD base currency
+        Double baseCurrency = map.get(rates.getBase());
         Double targetCurrency = map.get(currencyCode);
         Double appBaseCurrency = map.get(this.baseCurrency);
 
-        return new BigDecimal(baseCurrency * targetCurrency / appBaseCurrency ).doubleValue();
+        return new BigDecimal(baseCurrency * targetCurrency / appBaseCurrency).doubleValue();
     }
 }

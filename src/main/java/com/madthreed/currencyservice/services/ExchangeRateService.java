@@ -1,9 +1,7 @@
 package com.madthreed.currencyservice.services;
 
+import java.io.IOException;
+
 public interface ExchangeRateService {
-//    List<String> getCurrencyCodes();
-
-    int getCompareForCurrencyCode(String code);
-
-    void refreshRates();
+    int getCompareForCurrencyCode(String code) throws IOException;
 }

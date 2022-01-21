@@ -2,22 +2,20 @@ package com.madthreed.currencyservice.controllers;
 
 import com.madthreed.currencyservice.services.ExchangeRateService;
 import com.madthreed.currencyservice.services.GifService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
+@Slf4j
 @RestController
-@RequestMapping("/{httpEndpoint}")
 public class MainController {
-    private ExchangeRateService exchangeRateService;
-    private GifService gifService;
+    private final ExchangeRateService exchangeRateService;
+    private final GifService gifService;
 
     @Autowired
     public MainController(ExchangeRateService exchangeRateService, GifService gifService) {
@@ -25,14 +23,16 @@ public class MainController {
         this.gifService = gifService;
     }
 
-    @GetMapping("/get-random-gif/{currency}")
-    public Integer getRandomGif(@PathVariable("currency") String currency) throws IOException {
-        ResponseEntity<?> gif = gifService.getGif("rich");
-
-        Map map = (LinkedHashMap) gif.getBody();
-
-        exchangeRateService.getCompareForCurrencyCode(currency);
-
-        return null;
+    @RequestMapping("${httpEndpoint}/get/{currency}")
+    public String getRandomGif(@PathVariable String currency, HttpServletResponse response) {
+        try {
+            int res = exchangeRateService.getCompareForCurrencyCode(currency);
+            String gifUrl = res >= 0 ? gifService.getGifUrl("${gif_name.rich}") : gifService.getGifUrl("${gif_name.broke}");
+//            response.sendRedirect(gifUrl);
+            return gifUrl;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return e.getMessage();
+        }
     }
 }
