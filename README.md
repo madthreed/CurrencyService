@@ -14,6 +14,13 @@ ___
     {currency} - тег валюты для сравнения с базовой
 
 ___
+**Ответ:**
+
+    URL gif-картинки с сервиса Giphy.com
+    либо текст ошибки
+
+
+___
 **application.properties**
 
     httpEndpoint - эндпоинт сервиса
