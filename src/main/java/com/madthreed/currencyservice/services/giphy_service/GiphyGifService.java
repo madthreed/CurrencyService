@@ -36,17 +36,17 @@ public class GiphyGifService implements GifService {
         }
 
         JSONObject jsonBody;
-        String embed_url;
+        String gifUrl;
 
         try {
             jsonBody = new JSONObject(randomGifResponse.getBody());
-            embed_url = jsonBody.getJSONObject("data").getString("embed_url");
+            gifUrl = jsonBody.getJSONObject("data").getString("url");
         } catch (JSONException e) {
             e.printStackTrace();
             throw new InvalidObjectException("Can't parse gif URL from Giphy json response");
         }
 
 
-        return embed_url;
+        return gifUrl;
     }
 }
