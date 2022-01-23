@@ -8,7 +8,7 @@
 ___
 **Использование сервиса:**
 
-    host:8080//rnd-gif/get/{currency}
+    host:8080/rnd-gif/get/{currency}
     где:
     /rnd-gif - httpEndpoint, указанный в файле конфигурации application.properties
     {currency} - тег валюты для сравнения с базовой
